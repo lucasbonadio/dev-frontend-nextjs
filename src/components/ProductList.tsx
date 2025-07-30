@@ -24,7 +24,7 @@ export function ProductList({ products }: Props) {
           <p className="text-blue-600 font-bold mt-2 mb-4">${product.price}</p>
           <Link
             href={`/products/${product.id}`}
-            className="mt-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="mt-auto rounded-full px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition"
           >
             Ver detalhes
           </Link>
