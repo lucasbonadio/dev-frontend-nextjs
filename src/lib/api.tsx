@@ -23,5 +23,19 @@ export async function createProduct(productData: NewProductPayload): Promise<Pro
     throw new Error("Erro ao criar produto");
   }
 
-  return res.json(); // A Fake Store API retorna o produto criado com um ID
+  return res.json();
+}
+
+export async function updateProduct(id: string, productData: NewProductPayload): Promise<Product> {
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(productData),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Erro ao atualizar produto com ID ${id}`);
+  }
+
+  return res.json();
 }

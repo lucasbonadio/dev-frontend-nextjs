@@ -1,25 +1,35 @@
+// app/components/SuccessMessage.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 
 interface SuccessMessageProps {
   initialVisibility: boolean;
-  // You might consider adding a 'message' prop if the text itself could change
-  // message: string;
+  message?: string;
 }
 
-export function SuccessMessage({ initialVisibility }: SuccessMessageProps) {
+export function SuccessMessage({ initialVisibility, message = "Produto criado com sucesso!" }: SuccessMessageProps) {
   const [isVisible, setIsVisible] = useState(initialVisibility);
+  const [displayMessage, setDisplayMessage] = useState(message);
+
+  useEffect(() => {
+    if (message) {
+      setDisplayMessage(message);
+    }
+    if (initialVisibility) {
+        setIsVisible(true);
+    }
+  }, [initialVisibility, message]);
 
   useEffect(() => {
     if (isVisible) {
       const timer = setTimeout(() => {
         setIsVisible(false);
-        // Remove the query parameter from the URL after the message disappears
         const url = new URL(window.location.href);
         url.searchParams.delete("success");
+        url.searchParams.delete("message");
         window.history.replaceState({}, "", url.toString());
-      }, 1500); // 1.5 seconds
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
@@ -39,7 +49,7 @@ export function SuccessMessage({ initialVisibility }: SuccessMessageProps) {
           strokeLinejoin="round"
         />
       </svg>
-      Produto criado com sucesso!
+      {displayMessage}
     </div>
   );
 }

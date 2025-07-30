@@ -1,3 +1,4 @@
+// app/page.tsx
 import Link from "next/link";
 import { fetchProducts } from "../lib/api";
 import { ProductList } from "../components/ProductList";
@@ -8,7 +9,9 @@ export default async function Home({
 }: {
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-  const productCreated = searchParams?.success === "true";
+  // Lê o parâmetro 'success' e 'message' da URL
+  const productActionSuccess = searchParams?.success === "true";
+  const successMessage = searchParams?.message ? decodeURIComponent(searchParams.message as string) : "Produto criado com sucesso!";
 
   let products = [];
   try {
@@ -18,12 +21,13 @@ export default async function Home({
   }
 
   return (
-    <main className="max-w-4xl mx-auto p-4 relative">
-      {productCreated && (
-        <div className="fixed bottom-5 right-20 z-50">
-          <SuccessMessage initialVisibility={productCreated} />
+    <main className="max-w-4xl mx-auto p-4">
+      {productActionSuccess && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <SuccessMessage initialVisibility={productActionSuccess} message={successMessage} />
         </div>
       )}
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Produtos</h1>
         <Link

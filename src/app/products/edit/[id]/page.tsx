@@ -1,14 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createProduct } from "@/lib/api";
-import { NewProductPayload } from "@/types/Product";
 import Link from "next/link";
+import { fetchProductById, updateProduct } from "@/lib/api";
+import { NewProductPayload } from "@/types/Product";
 
-export default function NewProductPage() {
-  const [form, setForm] = useState({
+interface EditProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function EditProductPage({ params }: EditProductPageProps) {
+  const productId = params.id;
+
+  interface ProductFormState {
+    title: string;
+    price: string;
+    description: string;
+    category: string;
+    image: string;
+  }
+
+  const [form, setForm] = useState<ProductFormState>({
     title: "",
     price: "",
     description: "",
@@ -18,10 +34,48 @@ export default function NewProductPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState("");
+  const [productNotFound, setProductNotFound] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    async function loadProduct() {
+      if (!productId) {
+        setLoading(false);
+        setProductNotFound(true);
+        return;
+      }
+      try {
+        setLoading(true);
+        setApiError("");
+        setProductNotFound(false);
+        const productData = await fetchProductById(productId);
+
+        setForm({
+          title: productData.title,
+          price: new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(productData.price),
+          description: productData.description,
+          category: productData.category,
+          image: productData.image,
+        });
+        setImagePreview(productData.image);
+      } catch (error) {
+        console.error("Erro ao carregar produto para edição:", error);
+        setApiError(
+          "Erro ao carregar produto. Verifique se o ID está correto."
+        );
+        setProductNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProduct();
+  }, [productId]);
 
   function validate() {
     const newErrors: { [key: string]: string } = {};
@@ -29,14 +83,13 @@ export default function NewProductPage() {
     const cleanedPrice = form.price.replace(/[^\d.]/g, "");
     const numericPrice = parseFloat(cleanedPrice);
 
-    if (isNaN(numericPrice) || numericPrice <= 0) {
+    if (isNaN(numericPrice) || numericPrice <= 0)
       newErrors.price = "Preço deve ser um número maior que zero";
-    }
-
     if (!form.description.trim())
       newErrors.description = "Descrição é obrigatória";
     if (!form.category.trim()) newErrors.category = "Categoria é obrigatória";
-    if (!imageFile) newErrors.image = "Selecione uma imagem";
+    if (!imageFile && !imagePreview)
+      newErrors.image = "Selecione uma imagem ou mantenha a atual";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -44,8 +97,9 @@ export default function NewProductPage() {
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -72,40 +126,35 @@ export default function NewProductPage() {
     setForm((prev) => ({ ...prev, price: cleanedValue }));
   }
 
-function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-  let value = e.target.value;
+  function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let value = e.target.value;
 
-  value = value.replace(/[^0-9.]/g, "");
+    value = value.replace(/[^\d.]/g, "");
 
-  const parts = value.split(".");
-  if (parts.length > 2) {
-    value = parts[0] + "." + parts.slice(1).join("");
+    const parts = value.split(".");
+    if (parts.length > 2) {
+      value = parts[0] + "." + parts.slice(1).join("");
+    }
+
+    if (parts.length === 2 && parts[1].length > 2) {
+      value = parts[0] + "." + parts[1].substring(0, 2);
+    }
+
+    setForm((prev) => ({ ...prev, price: value }));
+    setErrors({ ...errors, price: "" });
   }
-
-  if (parts[1]?.length > 2) {
-    value = parts[0] + "." + parts[1].substring(0, 2);
-  }
-
-  setForm((prev) => ({ ...prev, price: value }));
-  if (errors.price) {
-    setErrors((prevErrors) => ({ ...prevErrors, price: "" }));
-  }
-}
 
   function handlePriceBlur(e: React.FocusEvent<HTMLInputElement>) {
     const value = e.target.value;
-
-    if (!value || value === ".") {
-      setForm((prev) => ({ ...prev, price: "" }));
-      return;
-    }
-
-    const numericValue = parseFloat(value);
+    const cleanedValue = value.replace(/[^\d.]/g, "");
+    const numericValue = parseFloat(cleanedValue);
 
     if (!isNaN(numericValue)) {
       const formattedValue = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       }).format(numericValue);
       setForm((prev) => ({ ...prev, price: formattedValue }));
     } else {
@@ -119,8 +168,7 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!validate()) return;
     setLoading(true);
 
-    const cleanedPrice = form.price.replace(/[^\d.]/g, "");
-    const priceToSend = parseFloat(cleanedPrice);
+    const priceToSend = parseFloat(form.price.replace(/[^\d.]/g, ""));
 
     const productPayload: NewProductPayload = {
       title: form.title,
@@ -131,25 +179,44 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     };
 
     try {
-      await createProduct(productPayload);
+      await updateProduct(productId, productPayload);
 
-      setForm({
-        title: "",
-        price: "",
-        description: "",
-        category: "",
-        image: "",
-      });
-      setImageFile(null);
-      setImagePreview("");
-
-      router.push("/?success=true");
+      router.push(
+        `/?success=true&message=${encodeURIComponent(
+          "Produto atualizado com sucesso!"
+        )}`
+      );
     } catch (error) {
-      console.error("Failed to create product:", error);
-      setApiError("Erro ao criar produto. Tente novamente.");
+      console.error("Erro ao atualizar produto:", error);
+      setApiError("Erro ao atualizar produto. Tente novamente.");
     } finally {
       setLoading(false);
     }
+  }
+
+  if (loading) {
+    return (
+      <main className="max-w-xl mx-auto p-4 flex items-center justify-center h-screen">
+        <p className="text-gray-600">Carregando produto...</p>
+      </main>
+    );
+  }
+
+  if (productNotFound) {
+    return (
+      <main className="max-w-xl mx-auto p-4 text-center">
+        <h1 className="text-2xl font-bold mb-4">Produto Não Encontrado</h1>
+        <p className="text-red-500 mb-4">
+          O produto com ID "{productId}" não pôde ser carregado.
+        </p>
+        <Link
+          href="/"
+          className="px-4 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition font-medium"
+        >
+          Voltar para a lista de produtos
+        </Link>
+      </main>
+    );
   }
 
   return (
@@ -165,8 +232,9 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
           </svg>
           Voltar
         </Link>
-        <h1 className="text-2xl font-bold">Novo Produto</h1>
+        <h1 className="text-2xl font-bold">Editar Produto</h1>
       </div>
+
       <form
         onSubmit={handleSubmit}
         className="bg-white rounded-xl shadow p-6 flex flex-col gap-4 relative"
@@ -190,7 +258,7 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
           <input
             name="price"
             type="text"
-            placeholder="Preço (ex: 49.90)"
+            placeholder="Preço (ex: 12.34)"
             className={`border px-3 py-2 rounded-xl w-full ${
               errors.price ? "border-red-500" : ""
             }`}
@@ -239,7 +307,7 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
           <label
             htmlFor="image-upload"
             className={`block text-sm font-medium text-gray-700 mb-1 ${
-              errors.image ? "text-red-500" : ""
+              errors.image ? "border-red-500" : ""
             }`}
           >
             Imagem do Produto
@@ -278,7 +346,7 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
           className="bg-green-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-green-700 transition disabled:opacity-60"
           disabled={loading}
         >
-          {loading ? "Salvando..." : "Criar Produto"}
+          {loading ? "Salvando..." : "Salvar Alterações"}
         </button>
       </form>
     </main>
