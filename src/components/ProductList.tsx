@@ -1,5 +1,6 @@
 import { Product } from "../types/Product";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = { products: Product[] };
 
@@ -7,7 +8,10 @@ export function ProductList({ products }: Props) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {products.map((product) => (
-        <div key={product.id} className="flex flex-col items-center border rounded p-4">
+        <div
+          key={product.id}
+          className="flex flex-col items-center border rounded p-4"
+        >
           <Image
             src={product.image}
             alt={product.title}
@@ -18,12 +22,12 @@ export function ProductList({ products }: Props) {
           />
           <h2 className="font-semibold text-lg text-center">{product.title}</h2>
           <p className="text-blue-600 font-bold mt-2 mb-4">${product.price}</p>
-          <a
+          <Link
             href={`/products/${product.id}`}
             className="mt-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
             Ver detalhes
-          </a>
+          </Link>
         </div>
       ))}
     </div>

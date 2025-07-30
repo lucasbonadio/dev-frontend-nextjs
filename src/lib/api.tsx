@@ -5,3 +5,9 @@ export async function fetchProducts(): Promise<Product[]> {
   if (!res.ok) throw new Error("Erro ao buscar produtos");
   return res.json();
 }
+
+export async function fetchProductById(id: string): Promise<Product> {
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`);
+  if (!res.ok) throw new Error("Produto não encontrado");
+  return res.json();
+}
