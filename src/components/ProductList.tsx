@@ -16,7 +16,7 @@ export function ProductList({ products }: Props) {
             className="h-32 object-contain mb-2"
             style={{ objectFit: "contain" }}
           />
-          <h2 className="font-semibold text-lg text-center">{product.price}</h2>
+          <h2 className="font-semibold text-lg text-center">{product.title}</h2>
           <p className="text-blue-600 font-bold mt-2 mb-4">${product.price}</p>
           <a
             href={`/products/${product.id}`}
