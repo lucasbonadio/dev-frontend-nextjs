@@ -1,9 +1,8 @@
 import { fetchProducts } from "../lib/api";
-import { Product } from "../types/Product";
-import Image from "next/image";
+import { ProductList } from "../components/ProductList";
 
 export default async function Home() {
-  let products: Product[] = [];
+  let products = [];
   try {
     products = await fetchProducts();
   } catch (e) {
@@ -13,28 +12,7 @@ export default async function Home() {
   return (
     <main className="max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Produtos</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <div key={product.id} className="flex flex-col items-center border rounded p-4">
-            <Image
-              src={product.image}
-              alt={product.title}
-              width={128}
-              height={128}
-              className="h-32 object-contain mb-2"
-              style={{ objectFit: "contain" }}
-            />
-            <h2 className="font-semibold text-lg text-center">{product.title}</h2>
-            <p className="text-blue-600 font-bold mt-2 mb-4">${product.price}</p>
-            <a
-              href={`/products/${product.id}`}
-              className="mt-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-            >
-              Ver detalhes
-            </a>
-          </div>
-        ))}
-      </div>
+      <ProductList products={products} />
     </main>
   );
 }
