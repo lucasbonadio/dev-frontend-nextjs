@@ -1,9 +1,9 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { fetchProductById, updateProduct } from "@/lib/api";
 import { NewProductPayload } from "@/types/Product";
 import { useToast } from "@/app/context/ToastContext";
@@ -11,7 +11,7 @@ import { BackButton } from "@/components/BackButton";
 
 interface EditProductPageProps {
   params: {
-    id: string;
+    id: number;
   };
 }
 

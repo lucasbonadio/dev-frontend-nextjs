@@ -9,7 +9,7 @@ export async function fetchProducts(): Promise<Product[]> {
   return res.json();
 }
 
-export async function fetchProductById(id: string): Promise<Product> {
+export async function fetchProductById(id: number): Promise<Product> {
   const res = await fetch(`${API_URL}/products/${id}`);
   if (!res.ok) throw new Error("Produto não encontrado");
   return res.json();
