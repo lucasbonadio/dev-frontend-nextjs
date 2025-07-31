@@ -3,7 +3,6 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { loginUser } from "@/lib/api";
-// import Cookies from "js-cookie"; // 1. Remova a importação da biblioteca
 
 export default function LoginPage() {
   const [username, setUsername] = useState("mor_2314");
@@ -20,12 +19,9 @@ export default function LoginPage() {
     try {
       const response = await loginUser({ username, password });
       
-      // 2. Substitua a criação do cookie pela forma nativa
       const date = new Date();
-      // Define a expiração para 1 dia a partir de agora
       date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
       const expires = "expires=" + date.toUTCString();
-      // Define o cookie com o token, data de expiração e caminho raiz
       document.cookie = `token=${response.token};${expires};path=/`;
 
       router.push("/");
@@ -40,7 +36,6 @@ export default function LoginPage() {
     }
   };
 
-  // ... O resto do seu componente (o JSX do formulário) não muda ...
   return (
     <main className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-xl shadow-lg">
