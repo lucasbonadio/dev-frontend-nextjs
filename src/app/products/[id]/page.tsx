@@ -4,13 +4,19 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { BackButton } from "@/components/BackButton";
 
 type Props = {
-  params: { id: number };
+  params: { id: string };
 };
 
 export default async function ProductDetailPage({ params }: Props) {
+  const numericId = parseInt(params.id, 10);
+
+  if (isNaN(numericId)) {
+    return notFound();
+  }
+
   let product;
   try {
-    product = await fetchProductById(params.id);
+    product = await fetchProductById(numericId);
   } catch {
     return notFound();
   }
