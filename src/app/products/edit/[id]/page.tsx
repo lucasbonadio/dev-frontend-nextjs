@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useState, useEffect } from "react";
@@ -53,7 +54,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         setLoading(true);
         setApiError("");
         setProductNotFound(false);
-        const productData = await fetchProductById(productId);
+        const productData = await fetchProductById(Number(productId));
 
         setForm({
           title: productData.title,
@@ -181,7 +182,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     };
 
     try {
-      await updateProduct(productId, productPayload);
+      await updateProduct(Number(productId), productPayload);
 
       showToast("Produto atualizado com sucesso!");
       router.push("/");
