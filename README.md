@@ -14,7 +14,7 @@ Você pode visualizar a aplicação em produção no seguinte link:
 - [x] **Criação de novo produto:** Formulário completo com validação de campos e máscara de valor.
 - [x] **Edição de produto:** Formulário pré-preenchido para alterar um produto existente.
 - [x] **Exclusão de produto:** Com modal de confirmação para evitar exclusões acidentais.
-- [ ] **Visualização de um produto:** (Página de detalhe individual não implementada).
+- [x] **Visualização de um produto:** Página de detalhe individual.
 
 ### Funcionalidades Adicionais
 - [x] **Tela de login fake:** Com proteção de rotas via Middleware do Next.js.
