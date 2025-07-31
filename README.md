@@ -5,7 +5,7 @@ Aplicação web completa que implementa um CRUD (Create, Read, Update, Delete) d
 ## 🌐 Deploy
 
 Você pode visualizar a aplicação em produção no seguinte link:  
-**[dev-frontend-nextjs-gamma.vercel.app]**
+**[dev-frontend-nextjs-gamma.vercel.app](https://vercel.com/lucas-projects-dddf5b1b/dev-frontend-nextjs/HM8eyoLuWBN1Rf7goSgNeZffMhgn)**
 
 ## ✅ Funcionalidades Implementadas
 
