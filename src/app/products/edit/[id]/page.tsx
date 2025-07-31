@@ -11,7 +11,7 @@ import { BackButton } from "@/components/BackButton";
 
 interface EditProductPageProps {
   params: {
-    id: number;
+    id: string;
   };
 }
 
@@ -54,7 +54,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         setLoading(true);
         setApiError("");
         setProductNotFound(false);
-        const productData = await fetchProductById(productId);
+        const numericId = parseInt(productId, 10);
+        const productData = await fetchProductById(numericId);
 
         setForm({
           title: productData.title,
@@ -182,7 +183,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     };
 
     try {
-      await updateProduct(productId, productPayload);
+      const numericId = parseInt(productId, 10);
+      await updateProduct(numericId, productPayload);
 
       showToast("Produto atualizado com sucesso!");
       router.push("/");
