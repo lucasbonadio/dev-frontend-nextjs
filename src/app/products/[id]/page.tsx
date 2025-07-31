@@ -8,7 +8,7 @@ import { BackButton } from "@/components/BackButton";
 import { Product } from "@/types/Product"; // Importe o tipo do Produto
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default function ProductDetailPage({ params }: Props) {
@@ -18,7 +18,8 @@ export default function ProductDetailPage({ params }: Props) {
 
   useEffect(() => {
     const loadProduct = async () => {
-      const numericId = parseInt(params.id, 10);
+      const { id } = await params;
+      const numericId = parseInt(id, 10);
       if (isNaN(numericId)) {
         setError(true);
         setLoading(false);
@@ -49,7 +50,7 @@ export default function ProductDetailPage({ params }: Props) {
   if (error) {
     return notFound();
   }
-  
+
   return (
     <main className="max-w-2xl mx-auto p-4 flex flex-col gap-6">
       <BackButton href="/" />
