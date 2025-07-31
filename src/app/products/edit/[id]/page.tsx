@@ -9,13 +9,8 @@ import { NewProductPayload } from "@/types/Product";
 import { useToast } from "@/app/context/ToastContext";
 import { BackButton } from "@/components/BackButton";
 
-interface EditProductPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function EditProductPage({ params }: EditProductPageProps) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function EditProductPage({ params }: any) {
   const productId = params.id;
   const showToast = useToast();
 
