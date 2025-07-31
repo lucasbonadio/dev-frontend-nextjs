@@ -1,89 +1,88 @@
-# 🧪 Desafio Técnico – Front-End (Next.js)
+# 🧪 Desafio Técnico Front-End: CRUD de Produtos com Next.js
 
-## 🎯 Objetivo
+Aplicação web completa que implementa um CRUD (Create, Read, Update, Delete) de produtos, utilizando a [FakeStore API](https://fakestoreapi.com/). O projeto foi desenvolvido com Next.js, TypeScript e Tailwind CSS, seguindo as melhores práticas de componentização, responsividade e testabilidade.
 
-Criar uma aplicação web com **Next.js** e **TypeScript** que implemente um **CRUD de produtos**, utilizando a [FakeStore API](https://fakestoreapi.com/).
+## 🌐 Deploy
 
----
+Você pode visualizar a aplicação em produção no seguinte link:  
+**[INSERIR LINK DO DEPLOY NA VERCEL AQUI]**
 
-## 📦 API a ser utilizada
+## ✅ Funcionalidades Implementadas
 
-Use os seguintes endpoints da FakeStore API:
+### Funcionalidades Obrigatórias
+- [x] **Listagem de produtos:** Visualização de todos os produtos em um grid responsivo.
+- [x] **Criação de novo produto:** Formulário completo com validação de campos e máscara de valor.
+- [x] **Edição de produto:** Formulário pré-preenchido para alterar um produto existente.
+- [x] **Exclusão de produto:** Com modal de confirmação para evitar exclusões acidentais.
+- [ ] **Visualização de um produto:** (Página de detalhe individual não implementada).
 
-- `GET /products` – listar produtos  
-- `GET /products/:id` – visualizar detalhes  
-- `POST /products` – criar novo produto  
-- `PUT /products/:id` – editar produto  
-- `DELETE /products/:id` – deletar produto  
-
-> ⚠️ A API é pública e os dados não são persistidos de verdade.
-
----
-
-## ✅ Funcionalidades
-
-### Obrigatórias
-- **Listagem** de produtos
-- **Visualização** de um produto
-- **Criação** de novo produto
-- **Edição** de produto existente
-- **Exclusão** de produto
-
-### Não obrigatórias
-- Tela de **login fake** com e-mail e senha fixos
-- **Menu lateral (sidebar)** responsivo
-- Layout **totalmente responsivo** (mobile e desktop)
+### Funcionalidades Adicionais
+- [x] **Tela de login fake:** Com proteção de rotas via Middleware do Next.js.
+- [x] **Layout Responsivo:** Com menu hambúrguer para uma experiência otimizada em dispositivos móveis.
+- [x] **Feedbacks de UI:** Toasts de sucesso/erro para ações do usuário e estados de carregamento.
+- [x] **Testes Unitários e de Componentes:** Utilizando Jest e React Testing Library para garantir a qualidade do código.
 
 ---
 
-## 🔧 Requisitos técnicos obrigatórios
+## 🛠️ Tecnologias Utilizadas
 
-- [x] Next.js com TypeScript
-- [x] React Hooks
-- [x] Integração com a FakeStore API
-- [x] Tailwind CSS para estilização
-- [x] Código bem organizado e componentizado
-- [x] Git com histórico de commits claros
-- [x] README com instruções de como rodar
-
----
-
-## 🌟 Diferenciais (pontos positivos)
-
-- Uso do **shadcn-ui**
-- Deploy funcional na **Vercel**
-- Feedbacks de carregamento, sucesso e erro
-- Testes com **Jest** ou **React Testing Library**
+- **Framework:** [Next.js](https://nextjs.org/) (com App Router)
+- **Linguagem:** [TypeScript](https://www.typescriptlang.org/)
+- **Estilização:** [Tailwind CSS](https://tailwindcss.com/)
+- **API:** [FakeStore API](https://fakestoreapi.com/)
+- **Testes:** [Jest](https://jestjs.io/) & [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
+- **Gerenciamento de Estado:** React Hooks (`useState`, `useEffect`) e Context API (para o sistema de Toasts).
 
 ---
 
-## 📥 Como iniciar
+## 🚀 Como Rodar o Projeto Localmente
 
-1. Faça um **fork** deste repositório.
-2. Trabalhe no seu fork normalmente, fazendo commits e push a cada evolução.
-3. Mantenha o repositório **público** para avaliação.
+Siga os passos abaixo para executar a aplicação em seu ambiente de desenvolvimento.
+
+### Pré-requisitos
+- [Node.js](https://nodejs.org/en/) (versão 18.x ou superior)
+- [npm](https://www.npmjs.com/), [Yarn](https://yarnpkg.com/) ou [pnpm](https://pnpm.io/)
+
+### Passos
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/lucasbonadio/dev-frontend-nextjs](https://github.com/lucasbonadio/dev-frontend-nextjs)
+   cd dev-frontend-nextjs
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+
+3. **Execute a aplicação em modo de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Acesse no navegador:**
+   Abra [http://localhost:3000](http://localhost:3000) para ver a aplicação rodando.
 
 ---
 
-## 📤 Entrega
+## 🧪 Rodando os Testes
 
-1. Envie o **link do seu fork** para a equipe de recrutamento.
-2. Certifique-se de que o `README.md` inclui:
-   - ✅ Como rodar o projeto localmente
-   - ✅ Link para o deploy (caso tenha publicado)
-
----
-
-## 💡 Avaliação
-
-Serão avaliados os seguintes pontos:
-
-- Qualidade da interface (UX/UI)
-- Qualidade do código e clareza
-- Organização das pastas e boas práticas
-- Responsividade e experiência do usuário
-- Uso correto de Git (commits, mensagens e histórico)
+Para executar os testes unitários e de componentes que foram criados, utilize o seguinte comando:
+```bash
+npm test
+```
+Para rodar em modo interativo (*watch mode*), que executa os testes novamente a cada alteração de arquivo:
+```bash
+npm run test:watch
+```
 
 ---
 
-Boa sorte e bom código! 🚀
+## 🔑 Credenciais de Acesso
+
+A aplicação utiliza um sistema de login fake para proteger as rotas. Utilize as credenciais abaixo para acessar a área de produtos:
+
+- **Usuário:** `mor_2314`
+- **Senha:** `83r5^_`
+
+*Nota: Caso a API da FakeStore apresente instabilidade com este usuário, uma credencial alternativa é `johnd` com a senha `m38rmF`.*
