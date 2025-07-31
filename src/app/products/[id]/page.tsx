@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ProductDetail } from "@/components/ProductDetail";
 import { BackButton } from "@/components/BackButton";
 
-type Props = {
-  params: { id: string };
-};
-
-export default async function ProductDetailPage({ params }: Props) {
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
   const numericId = parseInt(params.id, 10);
 
   if (isNaN(numericId)) {
