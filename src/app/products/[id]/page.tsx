@@ -6,11 +6,8 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { BackButton } from "@/components/BackButton";
 import { Product } from "@/types/Product";
 
-type Props = {
-  params: { id: string };
-};
-
-export default function ProductDetailPage({ params }: Props) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default function ProductDetailPage({ params }: any) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -45,12 +42,15 @@ export default function ProductDetailPage({ params }: Props) {
     return <div className="text-center p-8">Carregando produto...</div>;
   }
 
-  if (error ||!product) {
+  if (error || !product) {
     return (
       <main className="max-w-2xl mx-auto p-4 flex flex-col gap-6 items-center">
         <BackButton href="/" />
         <h1 className="text-2xl font-bold">Produto Não Encontrado</h1>
-        <p>O produto que você está procurando não existe ou não pôde ser carregado.</p>
+        <p>
+          O produto que você está procurando não existe ou não pôde ser
+          carregado.
+        </p>
       </main>
     );
   }
