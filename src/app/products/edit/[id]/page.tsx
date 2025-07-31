@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { fetchProductById, updateProduct } from "@/lib/api";
 import { NewProductPayload } from "@/types/Product";
+import { useToast } from "@/app/context/ToastContext";
 
 interface EditProductPageProps {
   params: {
@@ -15,6 +16,7 @@ interface EditProductPageProps {
 
 export default function EditProductPage({ params }: EditProductPageProps) {
   const productId = params.id;
+  const showToast = useToast();
 
   interface ProductFormState {
     title: string;
@@ -181,11 +183,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     try {
       await updateProduct(productId, productPayload);
 
-      router.push(
-        `/?success=true&message=${encodeURIComponent(
-          "Produto atualizado com sucesso!"
-        )}`
-      );
+      showToast("Produto atualizado com sucesso!");
+      router.push("/");
     } catch (error) {
       console.error("Erro ao atualizar produto:", error);
       setApiError("Erro ao atualizar produto. Tente novamente.");

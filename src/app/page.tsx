@@ -1,30 +1,72 @@
-// app/page.tsx
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { fetchProducts } from "../lib/api";
 import { ProductList } from "../components/ProductList";
 import { SuccessMessage } from "../components/SuccessMessage";
+import { fetchProducts, deleteProduct } from "../lib/api";
+import { Product } from "../types/Product";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  // Lê o parâmetro 'success' e 'message' da URL
-  const productActionSuccess = searchParams?.success === "true";
-  const successMessage = searchParams?.message ? decodeURIComponent(searchParams.message as string) : "Produto criado com sucesso!";
+export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState({
+    visible: false,
+    message: "",
+  });
 
-  let products = [];
-  try {
-    products = await fetchProducts();
-  } catch (e) {
-    return <div className="text-red-500">Erro ao carregar produtos.</div>;
+  useEffect(() => {
+    async function loadProducts() {
+      try {
+        setLoading(true);
+        const fetchedProducts = await fetchProducts();
+        setProducts(fetchedProducts);
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao carregar produtos. Por favor, tente mais tarde.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProducts();
+  }, []);
+
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      await deleteProduct(productId);
+      setProducts((currentProducts) =>
+        currentProducts.filter((p) => p.id !== productId)
+      );
+      setToast({ visible: true, message: "Produto excluído com sucesso!" });
+    } catch (error) {
+      console.error("Falha ao excluir o produto:", error);
+      setToast({ visible: true, message: "Erro ao excluir o produto." });
+    }
+  };
+
+  useEffect(() => {
+    if (toast.visible) {
+      const timer = setTimeout(() => {
+        setToast({ visible: false, message: "" });
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  if (loading) {
+    return <div className="text-center p-8">Carregando produtos...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center p-8">{error}</div>;
   }
 
   return (
     <main className="max-w-4xl mx-auto p-4">
-      {productActionSuccess && (
+      {toast.visible && (
         <div className="fixed bottom-4 right-4 z-50">
-          <SuccessMessage initialVisibility={productActionSuccess} message={successMessage} />
+          <SuccessMessage initialVisibility={true} message={toast.message} />
         </div>
       )}
 
@@ -37,7 +79,8 @@ export default async function Home({
           + Novo Produto
         </Link>
       </div>
-      <ProductList products={products} />
+
+      <ProductList products={products} onDelete={handleDeleteProduct} />
     </main>
   );
 }

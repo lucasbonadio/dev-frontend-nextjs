@@ -6,8 +6,10 @@ import { useRouter } from "next/navigation";
 import { createProduct } from "@/lib/api";
 import { NewProductPayload } from "@/types/Product";
 import Link from "next/link";
+import { useToast } from "@/app/context/ToastContext";
 
 export default function NewProductPage() {
+  const showToast = useToast();
   const [form, setForm] = useState({
     title: "",
     price: "",
@@ -72,25 +74,25 @@ export default function NewProductPage() {
     setForm((prev) => ({ ...prev, price: cleanedValue }));
   }
 
-function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-  let value = e.target.value;
+  function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    let value = e.target.value;
 
-  value = value.replace(/[^0-9.]/g, "");
+    value = value.replace(/[^0-9.]/g, "");
 
-  const parts = value.split(".");
-  if (parts.length > 2) {
-    value = parts[0] + "." + parts.slice(1).join("");
+    const parts = value.split(".");
+    if (parts.length > 2) {
+      value = parts[0] + "." + parts.slice(1).join("");
+    }
+
+    if (parts[1]?.length > 2) {
+      value = parts[0] + "." + parts[1].substring(0, 2);
+    }
+
+    setForm((prev) => ({ ...prev, price: value }));
+    if (errors.price) {
+      setErrors((prevErrors) => ({ ...prevErrors, price: "" }));
+    }
   }
-
-  if (parts[1]?.length > 2) {
-    value = parts[0] + "." + parts[1].substring(0, 2);
-  }
-
-  setForm((prev) => ({ ...prev, price: value }));
-  if (errors.price) {
-    setErrors((prevErrors) => ({ ...prevErrors, price: "" }));
-  }
-}
 
   function handlePriceBlur(e: React.FocusEvent<HTMLInputElement>) {
     const value = e.target.value;
@@ -143,7 +145,8 @@ function handlePriceInputChange(e: React.ChangeEvent<HTMLInputElement>) {
       setImageFile(null);
       setImagePreview("");
 
-      router.push("/?success=true");
+      showToast("Produto criado com sucesso!");
+      router.push("/");
     } catch (error) {
       console.error("Failed to create product:", error);
       setApiError("Erro ao criar produto. Tente novamente.");

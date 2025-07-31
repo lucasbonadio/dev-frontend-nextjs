@@ -12,7 +12,9 @@ export async function fetchProductById(id: string): Promise<Product> {
   return res.json();
 }
 
-export async function createProduct(productData: NewProductPayload): Promise<Product> {
+export async function createProduct(
+  productData: NewProductPayload
+): Promise<Product> {
   const res = await fetch("https://fakestoreapi.com/products", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -26,7 +28,10 @@ export async function createProduct(productData: NewProductPayload): Promise<Pro
   return res.json();
 }
 
-export async function updateProduct(id: string, productData: NewProductPayload): Promise<Product> {
+export async function updateProduct(
+  id: string,
+  productData: NewProductPayload
+): Promise<Product> {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
@@ -37,5 +42,17 @@ export async function updateProduct(id: string, productData: NewProductPayload):
     throw new Error(`Erro ao atualizar produto com ID ${id}`);
   }
 
+  return res.json();
+}
+
+export async function deleteProduct(id: number): Promise<Product> {
+  const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Erro ao excluir produto com ID ${id}`);
+  }
+  
   return res.json();
 }
