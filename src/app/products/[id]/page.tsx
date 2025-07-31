@@ -4,7 +4,7 @@ import { ProductDetail } from "@/components/ProductDetail";
 import { BackButton } from "@/components/BackButton";
 
 type Props = {
-  params: { id: string };
+  params: { id: number };
 };
 
 export default async function ProductDetailPage({ params }: Props) {

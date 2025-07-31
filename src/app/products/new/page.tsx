@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createProduct } from "@/lib/api";
 import { NewProductPayload } from "@/types/Product";
-import Link from "next/link";
 import { useToast } from "@/app/context/ToastContext";
 import { BackButton } from "@/components/BackButton";
 
