@@ -11,12 +11,12 @@ import { BackButton } from "@/components/BackButton";
 
 interface EditProductPageProps {
   params: {
-    id: string;
+    id: Promise<{ id: string }>;
   };
 }
 
 export default function EditProductPage({ params }: EditProductPageProps) {
-  const productId = params.id;
+  const productIdPromise = params.id;
   const showToast = useToast();
 
   interface ProductFormState {
@@ -34,6 +34,9 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     category: "",
     image: "",
   });
+
+  const [resolvedProductId, setResolvedProductId] = useState<string | null>(null);
+
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -44,17 +47,24 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const router = useRouter();
 
   useEffect(() => {
-    async function loadProduct() {
-      if (!productId) {
-        setLoading(false);
-        setProductNotFound(true);
-        return;
-      }
+    async function resolveAndLoadProduct() {
       try {
         setLoading(true);
         setApiError("");
         setProductNotFound(false);
-        const numericId = parseInt(productId, 10);
+
+        // Resolve a promise para obter o objeto e, em seguida, a string do ID.
+        const idObject = await productIdPromise;
+        const idString = idObject.id;
+
+        // Armazena o ID resolvido no estado.
+        setResolvedProductId(idString);
+
+        if (!idString || isNaN(parseInt(idString, 10))) {
+          throw new Error("ID inválido recebido.");
+        }
+
+        const numericId = parseInt(idString, 10);
         const productData = await fetchProductById(numericId);
 
         setForm({
@@ -78,8 +88,9 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         setLoading(false);
       }
     }
-    loadProduct();
-  }, [productId]);
+
+    resolveAndLoadProduct();
+  }, [productIdPromise]);
 
   function validate() {
     const newErrors: { [key: string]: string } = {};
@@ -169,6 +180,12 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setApiError("");
+
+    if (!resolvedProductId) {
+      setApiError("ID do produto não disponível. Não é possível salvar.");
+      return;
+    }
+
     if (!validate()) return;
     setLoading(true);
 
@@ -183,7 +200,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     };
 
     try {
-      const numericId = parseInt(productId, 10);
+      const numericId = parseInt(resolvedProductId, 10);
       await updateProduct(numericId, productPayload);
 
       showToast("Produto atualizado com sucesso!");
@@ -209,7 +226,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       <main className="max-w-xl mx-auto p-4 text-center">
         <h1 className="text-2xl font-bold mb-4">Produto Não Encontrado</h1>
         <p className="text-red-500 mb-4">
-          O produto com ID "{productId}" não pôde ser carregado.
+          O produto com ID "{resolvedProductId || 'inválido'}" não pôde ser carregado.
         </p>
         <BackButton href="/" text="Voltar para a lista de produtos" />
       </main>
