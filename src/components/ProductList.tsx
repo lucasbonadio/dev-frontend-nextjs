@@ -87,7 +87,7 @@ export function ProductList({ products, onDelete }: Props) {
               className="h-32 object-contain mb-4"
               style={{ objectFit: "contain" }}
             />
-            <h2 className="font-semibold text-lg text-center mb-2 h-14 flex items-center">
+            <h2 className="font-semibold text-lg text-center mb-2 h-14 line-clamp-2">
               {product.title}
             </h2>
             <p className="text-blue-600 font-bold text-xl mt-auto mb-4">
