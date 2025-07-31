@@ -29,7 +29,7 @@ export async function createProduct(
 }
 
 export async function updateProduct(
-  id: string,
+  id: number,
   productData: NewProductPayload
 ): Promise<Product> {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`, {

@@ -40,7 +40,7 @@ export function ProductList({ products, onDelete }: Props) {
           >
             <button
               onClick={() => handleOpenModal(product)}
-              className="absolute top-2 left-2 p-1.5 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition z-10"
+              className="absolute top-2 left-2 p-1.5 rounded-full cursor-pointer bg-red-100 text-red-600 hover:bg-red-200 transition z-10"
               title="Deletar Produto"
             >
               <svg

@@ -13,8 +13,10 @@ const mockProducts = [
   },
 ];
 
+const mockOnDelete = jest.fn();
+
 test('renderiza produtos corretamente', () => {
-  render(<ProductList products={mockProducts} />);
+  render(<ProductList products={mockProducts} onDelete={mockOnDelete} />);
   expect(screen.getByText("Produto Teste")).toBeInTheDocument();
   expect(screen.getByText("$99.99")).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /produto teste/i })).toBeInTheDocument();

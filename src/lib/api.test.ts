@@ -1,4 +1,5 @@
-import { fetchProducts, fetchProductById } from "./api";
+import { fetchProducts, fetchProductById, updateProduct, deleteProduct } from "./api";
+import { NewProductPayload } from "@/types/Product";
 
 describe("API FakeStore", () => {
   beforeEach(() => {
@@ -44,5 +45,64 @@ describe("API FakeStore", () => {
   it("deve lançar erro se fetchProductById falhar", async () => {
     (global.fetch as jest.Mock).mockResolvedValue({ ok: false });
     await expect(fetchProductById("1")).rejects.toThrow();
+  });
+
+  it("deve atualizar um produto em updateProduct", async () => {
+    const productId = 1;
+    const productData: NewProductPayload = {
+      title: "Produto Atualizado",
+      price: 150.99,
+      description: "Nova descrição",
+      category: "nova",
+      image: "url"
+    };
+    const mockUpdatedProduct = { id: productId, ...productData };
+
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => mockUpdatedProduct,
+    });
+
+    const result = await updateProduct(productId, productData);
+
+    expect(result).toEqual(mockUpdatedProduct);
+    expect(global.fetch).toHaveBeenCalledWith(
+      `https://fakestoreapi.com/products/${productId}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productData),
+      }
+    );
+  });
+
+  it("deve lançar erro se updateProduct falhar", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: false });
+    await expect(updateProduct(1, {} as NewProductPayload)).rejects.toThrow();
+  });
+
+  it("deve deletar um produto em deleteProduct", async () => {
+    const productId = 1;
+    const mockDeletedProduct = { id: productId, title: "Produto Deletado" };
+
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: async () => mockDeletedProduct,
+    });
+
+    const result = await deleteProduct(productId);
+
+    expect(result).toEqual(mockDeletedProduct);
+    expect(global.fetch).toHaveBeenCalledWith(
+      `https://fakestoreapi.com/products/${productId}`,
+      {
+        method: "DELETE",
+      }
+    );
+  });
+
+  it("deve lançar erro se deleteProduct falhar", async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: false });
+    await expect(deleteProduct(1)).rejects.toThrow();
   });
 });
